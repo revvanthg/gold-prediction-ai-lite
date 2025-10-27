@@ -1,0 +1,229 @@
+/* ===========================
+   Gold Prediction AI Lite
+   Author: Revvanth
+   =========================== */
+
+:root {
+  --gold-1: #c6a34f;
+  --gold-2: #f2d16b;
+  --gold-3: #8a6a2b;
+  --glass: #0f1116a8;
+}
+
+/* 🌌 Background: Futuristic Space Gold */
+body {
+  background: radial-gradient(ellipse at top, #151515, #090909),
+              linear-gradient(135deg, rgba(255,215,0,.05), rgba(0,0,0,.6));
+  background-blend-mode: overlay;
+  color: #fff;
+  font-family: system-ui, "Inter", Segoe UI, Roboto, Arial;
+  overflow-x: hidden;
+}
+
+/* 💎 Branding */
+.gold-text {
+  background: linear-gradient(135deg, var(--gold-2), var(--gold-1) 55%, var(--gold-3));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.brand-badge {
+  background: linear-gradient(135deg, #2a2411, #171309);
+  border: 1px solid #f2d16b33;
+  color: #fff;
+  padding: 0.5rem 0.75rem;
+  border-radius: 999px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  box-shadow: 0 0 15px rgba(242,209,107,0.18);
+}
+
+/* 💠 Glassmorphism Cards */
+.card-premium {
+  background: var(--glass);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(242,209,107,0.28);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.45),
+              0 0 20px rgba(242,209,107,0.08);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.card-premium:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.55),
+              0 0 26px rgba(242,209,107,0.14);
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #f2d16b66 40%, transparent);
+}
+
+/* ✨ Buttons */
+.btn-gold {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #2d2612, #1f1a0e);
+  color: #fff;
+  border: 1px solid rgba(242,209,107,0.55);
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.btn-gold:hover {
+  transform: scale(1.04);
+  box-shadow: 0 0 16px rgba(242,209,107,0.35);
+  color: #fff;
+}
+
+.btn-ghost {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.25);
+  color: #fff;
+  background: transparent;
+  transition: all 0.2s ease;
+}
+.btn-ghost:hover, .btn-ghost:focus {
+  color: #fff;
+  background: rgba(255,255,255,0.12);
+  border-color: rgba(255,255,255,0.45);
+}
+.btn-ghost:active {
+  color: #fff !important;
+  background: rgba(255,255,255,0.18) !important;
+  border-color: rgba(255,255,255,0.55) !important;
+}
+
+/* 🌊 Ripple Effect */
+.ripple {
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  background: rgba(255,255,255,0.6);
+  border-radius: 50%;
+  transform: scale(0);
+  opacity: 0.9;
+  animation: rippleEffect 0.55s linear;
+  pointer-events: none;
+}
+@keyframes rippleEffect {
+  to { transform: scale(22); opacity: 0; }
+}
+
+/* 🧮 Inputs */
+.form-label { color: #fff; }
+.form-control {
+  color: #fff;
+  background: #121318;
+  border: 1px solid #ffffff2b;
+}
+.form-text { color: #d7d7d7; }
+
+/* 📊 Metric Blocks */
+.metric {
+  border: 1px solid rgba(255,255,255,0.22);
+  border-radius: 16px;
+  padding: 1.1rem;
+  background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.03));
+  text-align: center;
+}
+.metric-title {
+  color: #fff !important;
+  opacity: 0.9;
+  font-size: 0.95rem;
+}
+.metric-value {
+  color: #fff !important;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+#amtPerGram, #pctChange, #predictedPrice1g {
+  color: #fff !important;
+}
+
+/* 🎯 Verdict Badges */
+.vb {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.8rem 1.2rem;
+  border-radius: 999px;
+  border: 1px solid #ffffff22;
+  box-shadow: inset 0 1px 0 #ffffff0f, 0 12px 28px #00000044;
+  font-weight: 800;
+  transition: all 0.35s ease;
+}
+.vb i { animation: pulse 2.2s ease-in-out infinite; }
+.rise { background: linear-gradient(135deg, rgba(255,0,0,0.28), rgba(255,0,0,0.08)); }
+.flat { background: linear-gradient(135deg, rgba(255,255,0,0.30), rgba(255,255,0,0.10)); }
+.dip  { background: linear-gradient(135deg, rgba(0,255,0,0.28), rgba(0,255,0,0.08)); }
+
+/* 🔄 Animations */
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.spin-slow { animation: spin 5s linear infinite; }
+
+/* ⏳ Loading Overlay */
+#loadingOverlay {
+  position: fixed;
+  inset: 0;
+  display: none;
+  place-items: center;
+  background: rgba(0,0,0,0.55);
+  z-index: 9999;
+  backdrop-filter: blur(3px);
+}
+.loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+.loader .gem {
+  font-size: 2.2rem;
+  color: #f2d16b;
+  animation: spin 1.2s linear infinite;
+}
+.shimmer {
+  width: 200px;
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255,255,255,0.08), rgba(255,255,255,0.35), rgba(255,255,255,0.08));
+  background-size: 200% 100%;
+  animation: shimmer 1.2s linear infinite;
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: 0 0; }
+}
+
+/* 🎉 Emoji Burst */
+#burst {
+  position: fixed;
+  pointer-events: none;
+  inset: 0;
+  overflow: hidden;
+  z-index: 9998;
+}
+.burst-item {
+  position: absolute;
+  font-size: 22px;
+  animation: fall 1200ms ease-in forwards;
+}
+@keyframes fall {
+  from { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  to { transform: translateY(140px) rotate(260deg); opacity: 0; }
+}
+
+/* 📱 Responsive Tweaks */
+.w-compact { max-width: 980px; }
+@media (max-width: 576px) {
+  .btn-gold, .btn-ghost { width: 100%; margin-bottom: 0.5rem; }
+  .metric { padding: 0.9rem; }
+}
