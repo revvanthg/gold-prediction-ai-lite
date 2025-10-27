@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gold Prediction</title>
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/3081/3081839.png" />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <style>
+    :root{ --gold-1:#c6a34f; --gold-2:#f2d16b; --gold-3:#8a6a2b; --glass:#0f1116a8; }
+    /* Background: Option C — Futuristic Space Gold */
+    body{
+      background: radial-gradient(ellipse at top, #151515, #090909),
+                  linear-gradient(135deg, rgba(255,215,0,.05), rgba(0,0,0,.6));
+      background-blend-mode: overlay; color:#fff; font-family: system-ui, "Inter", Segoe UI, Roboto, Arial; overflow-x:hidden;
+    }
+    .gold-text{ background:linear-gradient(135deg,var(--gold-2),var(--gold-1) 55%,var(--gold-3)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; }
+    .brand-badge{ background:linear-gradient(135deg,#2a2411,#171309); border:1px solid #f2d16b33; color:#fff; padding:.5rem .75rem; border-radius:999px; font-weight:700; letter-spacing:.3px; box-shadow:0 0 15px rgba(242,209,107,.18); }
+
+    /* Glassmorphism cards */
+    .card-premium{ background: var(--glass); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border:1px solid rgba(242,209,107,.28); border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,.45), 0 0 20px rgba(242,209,107,.08); transition:transform .25s ease, box-shadow .25s ease; }
+    .card-premium:hover{ transform: translateY(-2px); box-shadow:0 12px 40px rgba(0,0,0,.55), 0 0 26px rgba(242,209,107,.14); }
+
+    .divider{height:1px;background:linear-gradient(90deg,transparent,#f2d16b66 40%,transparent)}
+
+    .btn-gold{ position:relative; overflow:hidden; background:linear-gradient(135deg,#2d2612,#1f1a0e); color:#fff; border:1px solid rgba(242,209,107,.55); font-weight:800; letter-spacing:.3px; transition:transform .2s ease, box-shadow .2s ease; }
+    .btn-gold:hover{ transform:scale(1.04); box-shadow:0 0 16px rgba(242,209,107,.35); color:#fff; }
+    .btn-ghost{ position:relative; overflow:hidden; border:1px solid rgba(255,255,255,.25); color:#fff; background:transparent; transition: all .2s ease; }
+    .btn-ghost:hover, .btn-ghost:focus{ color:#fff; background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.45); }
+    .btn-ghost:active{ color:#fff !important; background: rgba(255,255,255,.18) !important; border-color: rgba(255,255,255,.55) !important; }
+
+    /* Ripple effect */
+    .ripple{ position:absolute; width:14px; height:14px; background:rgba(255,255,255,.6); border-radius:50%; transform:scale(0); opacity:.9; animation:rippleEffect .55s linear; pointer-events:none; }
+    @keyframes rippleEffect{ to{ transform:scale(22); opacity:0; } }
+
+    .form-label{color:#fff}
+    .form-control{ color:#fff; background:#121318; border:1px solid #ffffff2b }
+    .form-text{ color:#d7d7d7 }
+
+    /* Metric blocks */
+    .metric{ border:1px solid rgba(255,255,255,.22); border-radius:16px; padding:1.1rem; background:linear-gradient(145deg,rgba(255,255,255,.05),rgba(255,255,255,.03)); text-align:center; }
+    .metric-title{ color:#fff !important; opacity:.9; font-size:.95rem; }
+    .metric-value{ color:#fff !important; font-weight:800; letter-spacing:.3px; }
+    #amtPerGram, #pctChange, #predictedPrice1g { color:#fff !important; }
+
+    /* Verdict badges */
+    .vb{ display:inline-flex; align-items:center; gap:.6rem; padding:.8rem 1.2rem; border-radius:999px; border:1px solid #ffffff22; box-shadow:inset 0 1px 0 #ffffff0f, 0 12px 28px #00000044; font-weight:800; transition:all .35s ease; }
+    .rise{ background:linear-gradient(135deg, rgba(255,0,0,.28), rgba(255,0,0,.08)); }
+    .flat{ background:linear-gradient(135deg, rgba(255,255,0,.30), rgba(255,255,0,.10)); }
+    .dip{  background:linear-gradient(135deg, rgba(0,255,0,.28), rgba(0,255,0,.08)); }
+    .vb i{ animation:pulse 2.2s ease-in-out infinite; }
+
+    /* Animations */
+    @keyframes pulse{ 0%{transform:scale(1)} 50%{transform:scale(1.18)} 100%{transform:scale(1)} }
+    @keyframes spin{ to{ transform: rotate(360deg) } }
+    .spin-slow{ animation: spin 5s linear infinite }
+
+    /* Loading overlay */
+    #loadingOverlay{ position:fixed; inset:0; display:none; place-items:center; background:rgba(0,0,0,.55); z-index:9999; backdrop-filter: blur(3px); }
+    .loader{ display:flex; flex-direction:column; align-items:center; gap:.75rem; }
+    .loader .gem{ font-size:2.2rem; color:#f2d16b; animation:spin 1.2s linear infinite; }
+    .shimmer{ width:200px; height:8px; border-radius:999px; background:linear-gradient(90deg, rgba(255,255,255,.08), rgba(255,255,255,.35), rgba(255,255,255,.08)); background-size:200% 100%; animation: shimmer 1.2s linear infinite; }
+    @keyframes shimmer{ 0%{background-position:200% 0} 100%{background-position:0 0} }
+
+    /* Confetti/emoji burst */
+    #burst{ position:fixed; pointer-events:none; inset:0; overflow:hidden; z-index:9998; }
+    .burst-item{ position:absolute; font-size:22px; animation: fall 1200ms ease-in forwards; }
+    @keyframes fall{ from{ transform:translateY(-20px) rotate(0deg); opacity:1 } to{ transform:translateY(140px) rotate(260deg); opacity:0 } }
+
+    /* Mobile tweaks */
+    .w-compact{ max-width:980px }
+    @media (max-width: 576px){
+      .btn-gold, .btn-ghost { width:100%; margin-bottom:.5rem; }
+      .metric{ padding: .9rem; }
+    }
+  </style>
+</head>
+<body>
+  <div id="burst"></div>
+  <div id="loadingOverlay">
+    <div class="loader">
+      <i class="bi bi-gem gem"></i>
+      <div class="shimmer"></div>
+      <div class="text-white-50 small">Crunching your signals…</div>
+    </div>
+  </div>
+
+  <div class="container py-4 py-md-5 w-compact">
+    <div class="d-flex align-items-center justify-content-between gap-3 mb-4 flex-wrap">
+      <div>
+        <div class="brand-badge mb-2"><i class="bi bi-stars me-2"></i>Gold Prediction</div>
+        <h1 class="display-6 fw-bold m-0 gold-text">Tomorrow in Chennai: Rise • Flat • Dip</h1>
+        <div class="text-white-50">Manual rule using <span class="fw-semibold">XAU/USD</span>, <span class="fw-semibold">USD/INR</span> & <span class="fw-semibold">US 10Y</span> at <strong>5:30 PM</strong> and <strong>11:00 PM</strong>.</div>
+      </div>
+      <div class="text-end">
+        <i class="bi bi-gem" style="font-size:2rem;color:#f2d16b"></i>
+      </div>
+    </div>
+
+    <div class="card card-premium mb-4">
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-2">
+            <label class="form-label">Date</label>
+            <input type="date" class="form-control" id="datePick"/>
+          </div>
+          <div class="col-md-2" data-bs-toggle="tooltip" title="Gold price in USD per troy ounce at 17:30 IST">
+            <label class="form-label">XAU/USD @ 5:30</label>
+            <input type="number" class="form-control" id="xau1730" placeholder="2375.20" step="0.01"/>
+          </div>
+          <div class="col-md-2" data-bs-toggle="tooltip" title="Gold price in USD per troy ounce at 23:00 IST">
+            <label class="form-label">XAU/USD @ 11:00</label>
+            <input type="number" class="form-control" id="xau2300" placeholder="2382.10" step="0.01"/>
+          </div>
+          <div class="col-md-2" data-bs-toggle="tooltip" title="USD to INR rate at 17:30 IST">
+            <label class="form-label">USD/INR @ 5:30</label>
+            <input type="number" class="form-control" id="inr1730" placeholder="83.00" step="0.01"/>
+          </div>
+          <div class="col-md-2" data-bs-toggle="tooltip" title="USD to INR rate at 23:00 IST">
+            <label class="form-label">USD/INR @ 11:00</label>
+            <input type="number" class="form-control" id="inr2300" placeholder="83.10" step="0.01"/>
+          </div>
+          <div class="col-md-2" data-bs-toggle="tooltip" title="US 10-Year Treasury yield at 17:30 IST (e.g., 4.50)">
+            <label class="form-label">US 10Y @ 5:30</label>
+            <input type="number" class="form-control" id="y10_1730" placeholder="4.50" step="0.01"/>
+          </div>
+        </div>
+        <div class="row g-3 mt-3">
+          <div class="col-md-2" data-bs-toggle="tooltip" title="US 10-Year Treasury yield at 23:00 IST (e.g., 4.60)">
+            <label class="form-label">US 10Y @ 11:00</label>
+            <input type="number" class="form-control" id="y10_2300" placeholder="4.60" step="0.01"/>
+          </div>
+          <div class="col-md-3" data-bs-toggle="tooltip" title="If you know today's 1g price locally, enter it for a better T+1 estimate">
+            <label class="form-label">Today's Gold (₹/gram)</label>
+            <input type="number" class="form-control" id="inr1gToday" placeholder="6600" step="0.01"/>
+          </div>
+          <div class="col-md-7 d-grid d-md-flex align-items-end justify-content-md-end gap-2">
+            <div class="form-check form-switch align-self-center me-2" data-bs-toggle="tooltip" title="Play a soft ding on RISE verdict">
+              <input class="form-check-input" type="checkbox" id="soundToggle">
+              <label class="form-check-label" for="soundToggle">Sound</label>
+            </div>
+            <button class="btn btn-gold" id="btnPredict" data-bs-toggle="tooltip" title="Run calculation & show verdict"><i class="bi bi-magic me-2"></i>Predict</button>
+            <button class="btn btn-ghost" id="btnDownload" data-bs-toggle="tooltip" title="Save the verdict card as a PNG image"><i class="bi bi-download me-2"></i>Download PNG</button>
+            <button class="btn btn-ghost" id="btnShare" data-bs-toggle="tooltip" title="Share the verdict card via WhatsApp/Telegram"><i class="bi bi-share me-2"></i>Share</button>
+            <button class="btn btn-ghost" id="btnSpeak" data-bs-toggle="tooltip" title="Hear the verdict using text-to-speech"><i class="bi bi-megaphone me-2"></i>Speak</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-premium mb-4" id="verdictCard" style="display:none;">
+      <div class="card-body" id="verdictContent">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+          <div>
+            <div class="text-white-50">Verdict for Chennai</div>
+            <div class="h2 fw-bold mb-0" id="verdictText">—</div>
+            <div class="text-white-50" id="confidenceText" data-bs-toggle="tooltip" title="Estimated reliability based on movement strength and signal agreement">—</div>
+          </div>
+          <div id="verdictBadge" class="vb">—</div>
+        </div>
+        <div class="row g-3 mt-4">
+          <div class="col-md-4">
+            <div class="metric" data-bs-toggle="tooltip" title="Estimated ₹ difference for 1g compared with today's price">
+              <div class="metric-title">Approx change for 1 gram</div>
+              <div class="h4 metric-value m-0" id="amtPerGram">—</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="metric" data-bs-toggle="tooltip" title="Weighted % move from XAU/USD, USD/INR and US 10Y">
+              <div class="metric-title">Predicted % change</div>
+              <div class="h4 metric-value m-0" id="pctChange">—</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="metric" data-bs-toggle="tooltip" title="Expected Chennai gold price per gram for tomorrow (T+1)">
+              <div class="metric-title">Predicted price (1g) for T+1</div>
+              <div class="h4 metric-value m-0" id="predictedPrice1g">—</div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-3 text-white-50" id="whyText">—</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const OZT_TO_G = 31.1034768;
+    const ding = new Audio("https://cdn.pixabay.com/audio/2022/03/15/audio_125f739d7e.mp3");
+
+    // --- Helpers ---
+    function classify(deltaPct){ const eps = 0.10; if(deltaPct > eps) return 'Rise'; if(deltaPct < -eps) return 'Dip'; return 'Flat'; }
+    function fmtPct(x){ return (x>0?'+':'') + x.toFixed(2) + '%'; }
+    function moneyINR(x){ return new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0}).format(x); }
+    function badgeClass(v){ return v==='Rise'?'vb rise':(v==='Dip'?'vb dip':'vb flat'); }
+    function speakVerdict(text){ try{ window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(text); u.rate=1; u.pitch=1; u.lang='en-IN'; window.speechSynthesis.speak(u);} catch(e){} }
+    function showOverlay(show){ document.getElementById('loadingOverlay').style.display = show ? 'grid' : 'none'; }
+
+    function addRipple(e){ const btn = e.currentTarget; const rect = btn.getBoundingClientRect(); const ripple = document.createElement('span'); ripple.className = 'ripple'; ripple.style.left = (e.clientX - rect.left) + 'px'; ripple.style.top  = (e.clientY - rect.top)  + 'px'; btn.appendChild(ripple); setTimeout(()=> ripple.remove(), 600); }
+
+    async function captureCard(){ const node = document.getElementById('verdictCard'); const canvas = await html2canvas(node, {backgroundColor: null, scale: 2}); return new Promise((resolve)=> canvas.toBlob(b=> resolve({blob:b, dataUrl: canvas.toDataURL('image/png')}), 'image/png')); }
+    async function shareImage(){ try{ const {blob} = await captureCard(); const file = new File([blob], 'gold-prediction.png', {type:'image/png'}); if(navigator.canShare && navigator.canShare({files:[file]})){ await navigator.share({ files:[file], title:'Gold Prediction', text:'Tomorrow in Chennai – auto verdict' }); } else { const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href=url; a.download='gold-prediction.png'; a.click(); setTimeout(()=>URL.revokeObjectURL(url), 1000);} } catch(e){ alert('Share failed. Downloading instead.'); document.getElementById('btnDownload').click(); } }
+
+    function burst(verdict){ const container = document.getElementById('burst'); const emojis = verdict==='Rise' ? ['💹','📈','✨','💎'] : verdict==='Dip' ? ['📉','💨','🧊','⚠️'] : ['➖','🔔','🌙','✨']; for(let i=0;i<18;i++){ const span = document.createElement('span'); span.className='burst-item'; span.textContent = emojis[Math.floor(Math.random()*emojis.length)]; span.style.left = (10 + Math.random()*80) + 'vw'; span.style.top = (10 + Math.random()*10) + 'vh'; span.style.animationDelay = (Math.random()*0.3)+'s'; container.appendChild(span); setTimeout(()=> span.remove(), 1400); } }
+
+    function playVerdictSound(verdict){ const on = localStorage.getItem('soundOn') === 'true'; if(!on) return; if(verdict === 'Rise') { try{ ding.currentTime = 0; ding.play(); } catch(e){} } }
+
+    // Confidence with slight boost from signal agreement
+    function confidenceFrom(absPct, agreeScore){ let conf = 40 + absPct*55 + agreeScore; if(conf < 35) conf = 35; if(conf > 92) conf = 92; return Math.round(conf); }
+
+    // Compute weighted prediction using XAU, FX, and 10Y
+    function computePrediction(xau1730,xau2300,inr1730,inr2300,y10_1730,y10_2300){
+      const dXAU = ((xau2300 - xau1730) / xau1730) * 100;
+      const dFX  = ((inr2300 - inr1730) / inr1730) * 100;    // higher USD/INR tends to pressure INR gold ⇒ negative in model
+      const d10Y = ((y10_2300 - y10_1730) / y10_1730) * 100; // higher yields negative for gold
+      const pred = 0.55*dXAU - 0.25*dFX - 0.20*d10Y;         // weighted 80/20 finance rule
+
+      // agreement score: +5 if at least two signals support the direction, -5 if two conflict
+      const dir = pred>0 ? 1 : pred<0 ? -1 : 0;
+      let agree = 0;
+      if((dXAU>0?1:-1) === dir) agree++;
+      if((dFX<0?1:-1) === dir) agree++;   // FX inverted
+      if((d10Y<0?1:-1) === dir) agree++;  // 10Y inverted
+      const agreeScore = agree >= 2 ? 5 : (agree === 0 ? -5 : 0);
+
+      return {predPct: pred, dXAU, dFX, d10Y, agreeScore};
+    }
+
+    function show(predPct, xau2300, inr2300, today1g, details){
+      const verdict = classify(predPct);
+      const conf = confidenceFrom(Math.abs(predPct), details.agreeScore);
+      const colorClass = verdict==='Rise' ? 'text-danger' : (verdict==='Flat' ? 'text-warning' : 'text-success');
+
+      document.getElementById('verdictCard').style.display='block';
+      $('#verdictText').attr('class','h2 fw-bold mb-0 '+colorClass).text(verdict.toUpperCase());
+      $('#verdictBadge').attr('class', badgeClass(verdict)).html(`<i class="bi bi-shield-check"></i> ${verdict}`);
+      $('#confidenceText').text(`Confidence ~ ${conf}%`);
+      $('#pctChange').text(fmtPct(predPct));
+
+      // INR/gram baseline from market 23:00 if today's price not supplied
+      const xauInrOz_2300 = xau2300 * inr2300;
+      const perGram_2300 = xauInrOz_2300 / OZT_TO_G;
+      const baseToday = (today1g && !isNaN(parseFloat(today1g)) && parseFloat(today1g)>0) ? parseFloat(today1g) : perGram_2300;
+
+      const deltaPerGram = baseToday * (predPct/100);
+      const predicted1g = baseToday * (1 + predPct/100);
+      $('#amtPerGram').text(moneyINR(deltaPerGram));
+      $('#predictedPrice1g').text(moneyINR(predicted1g));
+
+      $('#whyText').html(`Weighted model: <code>0.55×Δ(XAU/USD)</code> − <code>0.25×Δ(USD/INR)</code> − <code>0.20×Δ(US10Y)</code>. FX & 10Y act inversely to gold. Agreement bonus applied to confidence. <br/>Signals: XAU ${fmtPct(details.dXAU)}, USD/INR ${fmtPct(details.dFX)} (inverted), US10Y ${fmtPct(details.d10Y)} (inverted).`);
+
+      burst(verdict);
+      playVerdictSound(verdict);
+      try{ speakVerdict(`Tomorrow in Chennai, gold is likely to ${verdict === 'Rise' ? 'rise' : verdict === 'Dip' ? 'dip' : 'stay flat'}. Confidence around ${conf} percent. Predicted one gram price is ${Math.round(predicted1g)} rupees.`); }catch(e){}
+    }
+
+    function initUI(){
+      document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el=> new bootstrap.Tooltip(el));
+      const toggle = document.getElementById('soundToggle');
+      const saved = localStorage.getItem('soundOn');
+      toggle.checked = saved === null ? true : saved === 'true';
+      toggle.addEventListener('change', ()=> localStorage.setItem('soundOn', toggle.checked));
+
+      // Ripple on main buttons
+      ['#btnPredict','#btnDownload','#btnShare','#btnSpeak'].forEach(sel=>{
+        const el = document.querySelector(sel); if(el) el.addEventListener('click', addRipple);
+      });
+    }
+
+    $(function(){
+      $('#datePick').val(new Date().toISOString().slice(0,10));
+      initUI();
+
+      $('#btnPredict').on('click', async function(){
+        const xau1730=parseFloat($('#xau1730').val());
+        const xau2300=parseFloat($('#xau2300').val());
+        const inr1730=parseFloat($('#inr1730').val());
+        const inr2300=parseFloat($('#inr2300').val());
+        const y10_1730=parseFloat($('#y10_1730').val());
+        const y10_2300=parseFloat($('#y10_2300').val());
+        const today1g = $('#inr1gToday').val();
+
+        if([xau1730,xau2300,inr1730,inr2300,y10_1730,y10_2300].some(v=>isNaN(v)||v<=0)) { alert('Enter all values: XAU/USD, USD/INR and US 10Y for 5:30 & 11:00.'); return; }
+
+        showOverlay(true);
+        try{
+          const details = computePrediction(xau1730,xau2300,inr1730,inr2300,y10_1730,y10_2300);
+          await new Promise(r=>setTimeout(r, 450));
+          show(details.predPct, xau2300, inr2300, today1g, details);
+        } catch(e){ alert('Prediction failed: '+e.message); }
+        finally { showOverlay(false); }
+      });
+
+      $('#btnDownload').on('click', async function(){ const {blob} = await captureCard(); const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='gold-prediction.png'; a.click(); setTimeout(()=>URL.revokeObjectURL(url), 1000); });
+      $('#btnShare').on('click', shareImage);
+      $('#btnSpeak').on('click', function(){ const vt = $('#verdictText').text() || ''; if(!vt || vt==='—') { alert('Run a prediction first.'); return; } speakVerdict(`Tomorrow in Chennai, gold is likely to ${vt.toLowerCase()}.`); });
+    });
+  </script>
+</body>
+</html>
